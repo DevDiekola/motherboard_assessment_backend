@@ -1,18 +1,25 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, CreateDateColumn, UpdateDateColumn } from "typeorm"
+// import { RefreshToken } from "./RefreshToken"
 
 @Entity()
 export class User {
 
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
-    @Column()
-    firstName: string
+    @Column('varchar', {unique: true})
+    email: string;
 
-    @Column()
-    lastName: string
+    @Column('varchar')
+    password: string;
 
-    @Column()
-    age: number
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
+
+    // @OneToOne((type) => RefreshToken, (refreshToken) => refreshToken.user)
+    // refreshToken: RefreshToken
 
 }
