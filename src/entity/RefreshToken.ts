@@ -7,7 +7,7 @@ export class RefreshToken {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column('int')
+    @Column('int', {unique: true})
     user_id: number
 
     @Column('text')
