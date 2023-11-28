@@ -8,34 +8,38 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     const accessToken = req.cookies?.access_token;
     const refreshToken = req.cookies?.refresh_token;
 
-    console.log("ACCESS TOKEN IS", accessToken, "REFRESH TOKEN IS", refreshToken);
-
     if (accessToken == null || refreshToken == null) {
         return res.status(401).json({ message: 'Request not authenticated' });
     }
 
-    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, async (err, payload) => {
+    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, async (err, payload: any) => {
+
+        const userID = payload.userID;
+
         if (err) {
             if (err.name !== "TokenExpiredError") {
                 return res.status(401).json({ message: 'Request not authenticated' });
             }
 
             const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
-            const dbRefreshToken = await refreshTokenRepo.findOne({ where: { token: refreshToken, user_id: payload.userID } });
+            const dbRefreshToken = await refreshTokenRepo.findOne({ where: { token: refreshToken, user_id: userID } });
 
             if (!dbRefreshToken) {
                 return res.status(401).json({ message: 'Request not authenticated' });
             }
 
-            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, payload) => {
+            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, payload: any) => {
                 if (err) {
                     return res.status(401).json({ message: 'Request not authenticated' });
                 }
 
-                const newAccessToken = generateAccessToken(payload.userID, '1d');
+                const userID = payload.userID;
+
+                const dayToMilli = 24*60*60*1000;
+                const newAccessToken = generateAccessToken(userID, dayToMilli);
                 res.cookie('access_token', newAccessToken, { httpOnly: true, sameSite: 'strict' });
 
-                req.body.userID = payload.userID;
+                req.body.userID = userID;
             })
 
         }

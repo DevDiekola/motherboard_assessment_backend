@@ -7,16 +7,16 @@ import { RefreshToken } from "../../entity/RefreshToken.js";
 
 export const logout = async (req: Request, res: Response) => {
 
-    const refreshToken = req.cookies?.refresh_token;
+  const refreshToken = req.cookies?.refresh_token;
 
-    if (refreshToken) {
-        const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
-        await refreshTokenRepo.delete({token: refreshToken});
-    }
+  if (refreshToken) {
+    const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
+    await refreshTokenRepo.delete({token: refreshToken});
+  }
 
-    res.clearCookie('access_token', { httpOnly: true });
-    res.clearCookie('refresh_token', { httpOnly: true });
+  res.clearCookie('access_token', { httpOnly: true });
+  res.clearCookie('refresh_token', { httpOnly: true });
 
-    return res.status(200).json({ message: 'User logged out successfully' });
+  return res.status(200).json({ message: 'User logged out successfully' });
     
 }

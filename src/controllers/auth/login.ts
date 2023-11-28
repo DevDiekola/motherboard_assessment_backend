@@ -24,17 +24,23 @@ export const login = async (req: Request, res: Response) => {
         return res.status(401).json({ message: 'Incorrect email or password' });
     }
 
-    const accessToken = generateAccessToken(user.id, '1h');
-    const refreshToken = generateRefreshToken(user.id, remember ? '30d' : '1d');
+    const hourToMilli = 60*60*1000;
+    const dayToMilli = 24*60*60*1000;
+    const thirtyDaysToMilli = 30*24*60*60*1000;
+
+    const accessToken = generateAccessToken(user.id, hourToMilli);
+    const refreshToken = generateRefreshToken(user.id, remember ? thirtyDaysToMilli : dayToMilli);
 
     const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
 
-    await refreshTokenRepo.delete({token: refreshToken});
+    await refreshTokenRepo.delete({user_id: user.id});
     const newRefreshToken = refreshTokenRepo.create({ user_id: user.id, token: refreshToken });
     
-    await refreshTokenRepo.save(newRefreshToken).catch((e) => {
+    try {
+        await refreshTokenRepo.save(newRefreshToken)
+    } catch (error) {
         return res.status(500).json({ message: 'Internal server error' });
-    })
+    }
 
     res.cookie('access_token', accessToken, { httpOnly: true, sameSite: 'strict' });
     res.cookie('refresh_token', refreshToken, { httpOnly: true, sameSite: 'strict' });
