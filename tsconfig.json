@@ -13,10 +13,4 @@
       "sourceMap": true,
       "esModuleInterop": true
    },
-   // "ts-node": {
-   //    "esm": true,
-   //    "compilerOptions": {
-   //      "module": "nodenext",
-   //    }
-   // }
 }

@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, CreateDateColumn, UpdateDateColumn } from "typeorm"
-// import { RefreshToken } from "./RefreshToken"
 
 @Entity()
 export class User {
@@ -18,8 +17,5 @@ export class User {
 
     @UpdateDateColumn()
     updated_at: Date;
-
-    // @OneToOne((type) => RefreshToken, (refreshToken) => refreshToken.user)
-    // refreshToken: RefreshToken
 
 }
