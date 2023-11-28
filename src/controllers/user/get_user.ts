@@ -11,5 +11,5 @@ export const getUser = async (req: Request, res: Response) => {
     if (user) {
         return res.status(200).json({ user: {email: user.email} });
     }
-    return res.status(400);
+    return res.status(400).json({ message: "User not found" });
 }

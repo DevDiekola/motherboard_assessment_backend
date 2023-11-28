@@ -43,6 +43,9 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
             })
 
         }
+        else {
+            req.body.userID = userID;
+        }
 
         next();
     })
